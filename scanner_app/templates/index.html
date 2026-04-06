@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Django Scientific Scanner</title>
+    <style>
+        :root {
+            --primary-red: #ff0000;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-dark: #2d3436;
+        }
+    
+        body 
+           
+    
+        .container {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            transition: transform 0.3s ease;
+        }
+    
+        .container:hover {
+            transform: translateY(-5px);
+        }
+    
+        .title-bar {
+            font-size: 28px;
+            font-weight: 300;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+    
+        .title-bar b {
+            color: var(--primary-red);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    
+        .input-group {
+            margin-bottom: 25px;
+        }
+    
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #636e72;
+        }
+    
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+    
+        input[type="text"]:focus {
+            border-color: var(--primary-red);
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.1);
+        }
+    
+        button {
+            width: 100%;
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
+        }
+    
+        button:hover {
+            background: #d60000;
+        }
+    
+        .result-section {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f9f9f9;
+            text-align: center;
+        }
+    
+        .result-label {
+            font-size: 14px;
+            color: #b2bec3;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+    
+        .result-value {
+            font-size: 32px;
+            font-weight: 800;
+            margin-top: 5px;
+        }
+    
+        .yes { color: #00b894; } /* Hijau Emerald */
+        .no { color: var(--primary-red); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-bar">
+            Scientific <b>Number</b>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="notation">Enter Notation</label>
+                <input type="text" id="notation" name="notation" 
+                       value="{{ input_value }}" placeholder="e.g. 6.72 x 10^9">
+            </div>
+            <button type="submit">RUN ANALYSIS</button>
+        </form>
+
+        {% if result %}
+        <div class="result-section">
+            <div class="result-label">Status</div>
+            <div class="result-value {% if result == 'YES' %}yes{% else %}no{% endif %}">
+                {{ result }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
