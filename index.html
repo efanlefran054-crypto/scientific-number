@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Number Scanner - Pro Version</title>
+    <style>
+        :root {
+            --primary-glow: #ff0055;
+            --secondary-glow: #00d2ff;
+            --bg-dark: #090d16;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-light: #f8fafc;
+        }
+
+        /* 1. ANIMASI LATAR BELAKANG */
+        body {
+            background: linear-gradient(135deg, #090d16 0%, #1e1b4b 50%, #030712 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-light);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* DEKORASI ORNAMEN MELAYANG */
+        .orb {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+        .orb-1 { background: var(--primary-glow); top: 10%; left: 10%; }
+        .orb-2 { background: var(--secondary-glow); bottom: 15%; right: 10%; animation-delay: 3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* 2. EFEK GLASSMORPHISM PADA KONTAINER */
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(to right, #ff0055, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        textarea { 
+            width: 100%; 
+            height: 130px; 
+            padding: 15px; 
+            background: rgba(15, 23, 42, 0.6);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px; 
+            resize: vertical;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary-glow);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+        }
+
+        /* TOMBOL INTERAKTIF */
+        button { 
+            background: linear-gradient(90deg, var(--primary-glow), #e100ff);
+            color: white; 
+            padding: 14px 20px; 
+            border: none; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            width: 100%;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 15px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
+            transition: all 0.3s ease;
+        }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 85, 0.5);
+        }
+        button:active { transform: translateY(0); }
+
+        /* KOTAK HASIL */
+        .result { 
+            margin-top: 25px; 
+            padding: 20px; 
+            background: rgba(15, 23, 42, 0.8); 
+            border-radius: 14px; 
+            border-left: 5px solid var(--secondary-glow);
+            display: none; 
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .badge {
+            color: white; 
+            font-weight: bold; 
+            background: linear-gradient(135deg, #3b82f6, #00d2ff); 
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            margin: 4px; 
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(0, 212, 255, 0.2);
+        }
+
+        /* 3. TABEL RIWAYAT (HISTORY LOG) */
+        .history-section {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 600px;
+            z-index: 1;
+        }
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .clear-btn {
+            background: transparent;
+            color: #f43f5e;
+            box-shadow: none;
+            font-size: 12px;
+            width: auto;
+            margin: 0;
+            padding: 4px 10px;
+            border: 1px solid #f43f5e;
+        }
+        .clear-btn:hover {
+            background: #f43f5e;
+            color: white;
+            box-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
+        }
+        .history-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 14px;
+        }
+        .history-item:last-child { border-bottom: none; }
+        .time-stamp { color: #64748b; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<!-- Efek Ornamen Latar Belakang -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="container">
+    <h2>Scientific Number Scanner</h2>
+    <div class="subtitle">Mendeteksi Notasi Ilmiah Secara Instan & Akurat</div>
+    
+    <textarea id="rawText" placeholder="Ketik atau tempel teks teks ilmiah Anda disini... (Contoh: Konstanta Planck adalah 6.626e-34 J s)"></textarea>
+    <button onclick="runScanner()">MULAI SCANNING</button>
+
+    <div id="resultBox" class="result">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <strong>Hasil Analisis:</strong>
+            <span id="copyStatus" style="font-size: 12px; color: #10b981;"></span>
+        </div>
+        <p id="outputContent" style="margin: 0; line-height: 1.6;"></p>
+    </div>
+</div>
+
+<!-- Bagian Riwayat Pemindaian -->
+<div class="history-section">
+    <div class="history-title">
+        <span>Riwayat Pemindaian</span>
+        <button onclick="clearHistory()" class="clear-btn">Hapus Semua</button>
+    </div>
+    <div class="history-card" id="historyCard">
+        <div style="color: #64748b; text-align: center; font-style: italic; font-size: 14px; padding: 10px 0;">Belum ada riwayat scan.</div>
+    </div>
+</div>
+
+<script>
+    // Memuat riwayat dari local storage saat halaman pertama kali dibuka
+    document.addEventListener("DOMContentLoaded", loadHistory);
+
+    function runScanner() {
+        const textInput = document.getElementById('rawText').value.trim();
+        if(!textInput) return;
+        
+        // Pola Regex Notasi Ilmiah
+        const scientificRegex = /[+-]?\d+(\.\d+)?([eE][+-]?\d+|x10\^[-+]?\d+)/g;
+        const matches = textInput.match(scientificRegex);
+        
+        const resultBox = document.getElementById('resultBox');
+        const outputContent = document.getElementById('outputContent');
+        
+        resultBox.style.display = "block";
+        
+        if (matches && matches.length > 0) {
+            const uniqueMatches = [...new Set(matches)];
+            
+            outputContent.innerHTML = "Ditemukan angka ilmiah berikut:<br><br>" + 
+                                      uniqueMatches.map(angka => `<span class="badge">${angka}</span>`).join(" ");
+            
+            // Simpan ke riwayat penyimpanan lokal browser
+            saveToHistory(uniqueMatches.join(", "));
+        } else {
+            outputContent.innerHTML = "<span style='color: #94a3b8; font-style: italic;'>Tidak ada notasi angka ilmiah yang terdeteksi.</span>";
+        }
+    }
+
+    // FUNGSI LOCAL STORAGE UNTUK RIWAYAT INTERAKTIF
+    function saveToHistory(itemText) {
+        let history = JSON.parse(localStorage.getItem("scanHistory")) || [];
+        const timeNow = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        // Simpan data baru di urutan paling atas
+        history.unshift({ text: itemText, time: timeNow });
+        
+        // Batasi maksimal hanya menyimpan 10 riwayat terakhir
+        if(history.length > 10) history.pop();
+        
+        localStorage.setItem("scanHistory", JSON.stringify(history));
+        loadHistory();
+    }
+
+    function loadHistory() {
+        const historyCard = document.getElementById('historyCard');
+        let history = JSON.parse(localStorage.getItem("scanHistory")) || [];
+        
+        if(history.length === 0) {
+            historyCard.innerHTML = `<div style="color: #64748b; text-align: center; font-style: italic; font-size: 14px; padding: 10px 0;">Belum ada riwayat scan.</div>`;
+            return;
+        }
+        
+        historyCard.innerHTML = history.map(item => `
+            <div class="history-item">
+                <span style="color: #00d2ff; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">${item.text}</span>
+                <span class="time-stamp">${item.time}</span>
+            </div>
+        `).join('');
+    }
+
+    function clearHistory() {
+        localStorage.removeItem("scanHistory");
+        loadHistory();
+    }
+</script>
+
+</body>
+</html>
